@@ -1,0 +1,35 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/RAM64.hdl
+
+/**
+ * Memory of 64 registers, each 16 bit-wide. Out holds the value
+ * stored at the memory location specified by address. If load==1, then
+ * the in value is loaded into the memory location specified by address
+ * (the loaded value will be emitted to out from the next time step onward).
+ */
+
+CHIP RAM64 {
+    IN in[16], load, address[6];
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+
+    // assign load based off start of address
+    DMux8Way(in=load, sel=address[3..5], a=r000load, b=r001load, c=r010load, d=r011load, e=r100load, f=r101load, g=r110load, h=r111load);
+
+    // Here are the 8 Ram8s
+    RAM8(in=in, load=r000load, address=address[0..2], out=value000);
+    RAM8(in=in, load=r001load, address=address[0..2], out=value001);
+    RAM8(in=in, load=r010load, address=address[0..2], out=value010);
+    RAM8(in=in, load=r011load, address=address[0..2], out=value011);
+    RAM8(in=in, load=r100load, address=address[0..2], out=value100);
+    RAM8(in=in, load=r101load, address=address[0..2], out=value101);
+    RAM8(in=in, load=r110load, address=address[0..2], out=value110);
+    RAM8(in=in, load=r111load, address=address[0..2], out=value111);
+
+    // Now pick which one to output based off address
+    Mux8Way16(a=value000, b=value001, c=value010, d=value011, e=value100, f=value101, g=value110, h=value111, sel=address[3..5], out=out);
+}
